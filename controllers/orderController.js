@@ -14,7 +14,7 @@ class OrderController{
     async getById(req, res, next){
         const { id } = req.params;
         try{
-            const order = Order.findOne({ where: { id }});
+            const order = await Order.findOne({ where: { id }});
             res.json({ status: true, response: order });
         } catch(e){
             return next(ApiError.internal(e));
@@ -23,14 +23,14 @@ class OrderController{
 
     async createOrder(req, res, next){
         const { idSmmcraft, idProject, socialNetwork, link, cost, spend, countOrdered,
-            countViews, payment, date, resellerId, resellerTypeId, userId } = req.body;
+            countViews, payment, resellerId, resellerTypeId, userId } = req.body;
 
-        if( !idSmmcraft || !socialNetwork || !cost || !spend || !countOrdered )
+        if( !idSmmcraft || !socialNetwork || !cost || !spend )
             return next(ApiError.internal('Заполните все поля ввода!'));
         
         try{
             const order = await Order.create({ idSmmcraft, idProject, socialNetwork, link, cost, spend, countOrdered,
-                countViews, payment, date, resellerId, resellerTypeId, userId });
+                countViews, payment, resellerId, resellerTypeId, userId });
             if(order)
                 res.json({ status: true, response: order });
         } catch(e){

@@ -76,7 +76,7 @@ const Order = sequelize.define('order', {
   },
   countOrdered: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true
   },
   countViews: {
     type: DataTypes.INTEGER,
@@ -86,9 +86,14 @@ const Order = sequelize.define('order', {
     type: DataTypes.STRING,
     allowNull: true
   },
-  date: {
+  dateCreate: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
+    allowNull: true
+  },
+  date: {
+    type: DataTypes.STRING,
+    defaultValue: new Date().toLocaleDateString('ru-RU'),
     allowNull: true
   }
 })
