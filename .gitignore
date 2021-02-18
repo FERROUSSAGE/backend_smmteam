@@ -1,4 +1,4 @@
 /node_modules/
-.env
-/utils/consts.js
-client-secret.json
+//.env
+///utils/consts.js
+//client-secret.json
