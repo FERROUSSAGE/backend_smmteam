@@ -8,7 +8,9 @@ const SPANEL_URL = 'https://socialpanel24.com/api/v2';
 const SPANEL_KEY = 'a6810f641f63a550137a52315d7f83ad';
 const VALUTE_URL = 'https://www.cbr-xml-daily.ru/daily_json.js';
 
-const SPREADSHEET_ID = '1af_ilY8FsygwpuZD4_onxkIs4BmtiWa2XDPgGT4AuMU'
+const SPREADSHEET_ID = '1af_ilY8FsygwpuZD4_onxkIs4BmtiWa2XDPgGT4AuMU';
+const GMAIL = 'smmcraft7@gmail.com';
+const GPASSWORD = 'vgdSoIP7X4';
 
 module.exports = {
     ADCORE_KEY, ADCORE_URL,
@@ -16,5 +18,7 @@ module.exports = {
     SMMOK_KEY, SMMOK_URL,
     SPANEL_KEY, SPANEL_URL,
     VALUTE_URL,
-    SPREADSHEET_ID
+    SPREADSHEET_ID,
+    GMAIL,
+    GPASSWORD
 };

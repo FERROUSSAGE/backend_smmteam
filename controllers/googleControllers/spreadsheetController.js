@@ -8,12 +8,21 @@ const credentions = require('../../client-secret.json');
 
 const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
 
-const copySheet = async (indexSheet) => {
-    const sheet = doc.sheetsByIndex[indexSheet];
+const copySheet = async (indexSheet, date) => {
+    try {
+        let sheet = doc.sheetsByIndex[indexSheet];
 
-    const index = (await sheet.copyToSpreadsheet(SPREADSHEET_ID)).data.index;
-    await doc.loadInfo();
-    return index;
+        if(sheet.title === date){
+            sheet.delete();
+            sheet = doc.sheetsByIndex[indexSheet - 1];
+        }
+    
+        const index = (await sheet.copyToSpreadsheet(SPREADSHEET_ID)).data.index;
+        await doc.loadInfo();
+        return index;
+    } catch (e) {
+        
+    }
 }
 
 
@@ -40,12 +49,12 @@ const getInfoOrders = async (date) => {
         }
     });
 
-    // const amountOfStream = orders.filter(order => order.getDataValue('countViews'))
-    //     .reduce(acc, order => acc + +order.getDataValue('cost'), 0);
+    const amountOfStream = orders.filter(order => order.getDataValue('countViews'))
+        .reduce((acc, order) => acc + +order.getDataValue('cost'), 0);
 
     return {
         list: oList,
-        // amountOfStream,
+        amountOfStream,
         paid: orders.length
     }
     
@@ -61,35 +70,43 @@ class SpreadsheetController{
     
         const date = new Date();
 
-        await doc.useServiceAccountAuth({
-            client_email: credentions.client_email,
-            private_key: credentions.private_key,
-        });
-        
-        await doc.loadInfo();
-        
-        const newSheetIndex = (await copySheet(doc.sheetCount - 1));
-        const newSheet = await doc.sheetsByIndex[newSheetIndex];
-        await newSheet.updateProperties({ title: date.toLocaleDateString('ru-RU') });
+        try{
 
-        await newSheet.loadCells();
+            await doc.useServiceAccountAuth({
+                client_email: credentions.client_email,
+                private_key: credentions.private_key,
+            });
+            
+            await doc.loadInfo();
+            
+            const newSheetIndex = (await copySheet(doc.sheetCount - 1, date.toLocaleDateString('ru-RU')));
+            const newSheet = await doc.sheetsByIndex[newSheetIndex];
+            await newSheet.updateProperties({ title: date.toLocaleDateString('ru-RU') });
 
-        const orders = await getInfoOrders(date);
+            await newSheet.loadCells();
 
-        orders.list.forEach((order, i) => 
-            Object.values(order)
-                .forEach((item, j) => {
-                    newSheet.getCell(i + 2, j).value = item;
-                })
-        );
+            const orders = await getInfoOrders(date);
 
-        newSheet.getCell(0, 8).value = name;
-        newSheet.getCell(0,0).value = getPatternHeader(date).smmcraft;
-        newSheet.getCell(0, 11).value = getPatternHeader(date).streamboost;
-        newSheet.getCell(23, 8).value = orders.paid;
-        // newSheet.getCell(2, 8).value = orders.amountOfStream;
+            orders.list.forEach((order, i) => 
+                Object.values(order)
+                    .forEach((item, j) => {
+                        newSheet.getCell(i + 2, j).value = item;
+                    })
+            );
 
-        await newSheet.saveUpdatedCells();
+            newSheet.getCell(0, 8).value = name;
+            newSheet.getCell(0,0).value = getPatternHeader(date).smmcraft;
+            newSheet.getCell(0, 11).value = getPatternHeader(date).streamboost;
+            newSheet.getCell(23, 8).value = orders.paid;
+            newSheet.getCell(3, 8).value = orders.amountOfStream;
+
+            newSheet.saveUpdatedCells()
+                .then(() => res.json({ status: true, response: { msg: 'Выгрузка произошла успешно!' } }))
+                .catch(e => res.json( { status: false, response: { msg: `Произошла ошибка - ${e}` } } ));
+
+        } catch(e){
+            return next(ApiError.internal(e));
+        }
     }
 
 }
