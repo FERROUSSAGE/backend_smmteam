@@ -6,9 +6,9 @@ const nodemailer = require('nodemailer');
 class NodemailerController{
     async send(req, res, next){
 
-        const { mail, idSmmcraft, text = null, subject } = req.body;
+        const { mail, subject, html } = req.body;
 
-        if(!mail || !idSmmcraft || !text || !subject)
+        if(!mail || !html)
             return next(ApiError.internal('Заполните все поля ввода!'));
 
         try {
@@ -23,14 +23,19 @@ class NodemailerController{
                 },
             });
 
-            const result = await transporter.sendMail({
-                from: '"smmcraft.ru" <team@smmcraft.ru>',
-                to: mail,
-                subject,
-                html: '',
-            });
+            try {
+                await transporter.sendMail({
+                    from: '"smmcraft.ru" <team@smmcraft.ru>',
+                    to: mail,
+                    subject: subject ? subject : 'Вам письмо от smmcraft.ru',
+                    html,
+                });
 
-            console.log(result);
+                return res.json({ status: true, response: { toMail: mail, msg: 'Сообщение успешно отправлено!' } });
+    
+            } catch (e) {
+                return next(ApiError.internal(e));
+            }
 
         } catch (e) {
             return next(ApiError.internal(e));

@@ -111,12 +111,20 @@ const Message = sequelize.define('message', {
     type: DataTypes.INTEGER, 
     allowNull: false
   },
-  isRead: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+})
+
+const Question = sequelize.define('question', {
+  title: {
+    type: DataTypes.TEXT,
     allowNull: false
   }
+})
 
+const Answer = sequelize.define('answer', {
+  text: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  }
 })
 
 Reseller.hasMany(ResellerType);
@@ -134,10 +142,15 @@ Order.belongsTo(User);
 Role.hasMany(User);
 User.belongsTo(Role);
 
+Answer.hasMany(Question);
+Question.belongsTo(Answer);
+
 module.exports = {
     User, 
     Reseller,
     ResellerType,
     Order,
-    Message
+    Message,
+    Question,
+    Answer
 }

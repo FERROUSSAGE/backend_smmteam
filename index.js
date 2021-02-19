@@ -1,13 +1,14 @@
 require('dotenv').config();
-
 const express = require('express');
 const app = express();
 const http = require('http').Server(app)
 const io = require('socket.io')(http);
+const bot = require('./bot').bot;
+
 const cors = require('cors');
 
 const sequelize = require('./db');
-const models = require('./models');
+require('./models');
 
 const router = require('./routes');
 const errorHandler = require('./middleware/errorMiddleware');
@@ -33,14 +34,15 @@ io.on('connection', (socket) => {
     
 });
 
-
 const start = async () => {
     try {
         await sequelize.authenticate();
         await sequelize.sync();
         http.listen(PORT, () => {
             console.log(`Server is running as port - ${PORT}`);
-        })
+        });
+
+        bot.launch();
     } catch(e) {
         console.log(e);
     }
