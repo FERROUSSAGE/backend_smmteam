@@ -35,7 +35,7 @@ class ResellerController{
             if(resellerUpdate)
                 res.json({ status: true, message: 'Обновление прошло успешно!' });
             else
-                res.json({ status: false, message: 'Произошла ошибка в удалении!' });
+                res.json({ status: false, message: 'Произошла ошибка в обновлении!' });
         } catch(e){
             return next(ApiError.internal(e));
         }

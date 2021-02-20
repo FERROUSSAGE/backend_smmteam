@@ -1,7 +1,6 @@
 const ApiError = require("../error/apiError");
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
-const router = require("../routes/apiRoutes/adcoreRouter");
 
 class UserController {
     async registration(req, res, next) {

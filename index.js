@@ -2,7 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const http = require('http').Server(app)
-const io = require('socket.io')(http);
+
+module.exports = require('socket.io')(http);
+
 const bot = require('./bot').bot;
 
 const cors = require('cors');
@@ -21,19 +23,6 @@ app.use('/', router);
 
 app.use(errorHandler);
 
-io.on('connection', (socket) => {
-    console.log(`connected ${socket.id}`);
-    socket.on('hello', (msg) => {
-        console.log(msg);
-        socket.broadcast.emit('hello', 'hello ' + msg + '. Твой id' + socket.id);
-    })
-
-    socket.on('disconnect', () => {
-      console.log(`disconnected ${socket.id}`);
-    });
-    
-});
-
 const start = async () => {
     try {
         await sequelize.authenticate();
@@ -44,7 +33,7 @@ const start = async () => {
 
         bot.launch();
     } catch(e) {
-        console.log(e);
+        throw e;
     }
 }
 

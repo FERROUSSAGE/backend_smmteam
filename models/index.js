@@ -99,7 +99,7 @@ const Order = sequelize.define('order', {
 })
 
 const Message = sequelize.define('message', {
-  text: {
+  message: {
     type: DataTypes.TEXT,
     allowNull: true
   },

@@ -6,7 +6,9 @@ const orderRouter = require('./orderRouter'),
     resellerTypeRouter = require('./resellerTypeRouter'),
     userRouter = require('./userRouter'),
     apiRoutes = require('./apiRoutes'),
-    googleRoutes = require('./googleRoutes');
+    googleRoutes = require('./googleRoutes'),
+    qaRoutes = require('./qaRoutes'),
+    telegramRouter = require('./telegramRouter');
 
 
 router.use('/user', userRouter);
@@ -15,5 +17,7 @@ router.use('/reseller', resellerRouter);
 router.use('/type', resellerTypeRouter);
 router.use('/api', apiRoutes);
 router.use('/google', googleRoutes);
+router.use('/qa', qaRoutes);
+router.use('/telegram', telegramRouter);
 
 module.exports = router;

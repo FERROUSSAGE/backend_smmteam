@@ -1,5 +1,6 @@
 const { Telegraf } = require('telegraf');
 const { Message, Answer, Question } = require('../models');
+const io = require('../index');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -14,20 +15,35 @@ const qaHandler = (ctx) => {
         })
 };
 
-const messageSendHandler = async (obj) => {
-    const { chatId, text } = obj;
+const messageCreate = async (obj) => {
+    const { message, nickName, chatId } = obj;
+    try {
+        const msg = await Message.create({ message, nickName, chatId });
+        if(msg)
+            return true;
+    } catch (e) { return false;}
+}
 
+const messageSendHandler = async (obj) => {
+    const { chatId, message } = obj;
     try{
-        return await bot.telegram.sendMessage(chatId, text);
+        return await bot.telegram.sendMessage(chatId, message);
     } catch(e){ return false; }
 };
 
-const messageAddHandler = async (ctx) => {
-    const { message: { text, chat: { first_name: firstname, last_name: lastname, id: chatId } } } = ctx;
-    
+const messageHandler = async (ctx, socket) => {
+    const { message: { text: message, chat: { first_name: firstname, last_name: lastname, id: chatId } } } = ctx;
+    const nickName = `${firstname} ${lastname}`;
     try {
-        await Message.create({text, nickName: `${firstname} ${lastname}`, chatId}); 
-    } catch (e) { console.log(e); }
+        if(messageCreate({message: `${nickName}:${message}`, nickName, chatId}))
+            socket.emit('MESSAGE_SEND', {message: `${nickName}:${message}`, nickName, chatId});
+        
+        socket.on('MESSAGE_ADD', (data) => {
+            data = JSON.parse(data);
+            if(messageCreate(data))
+                messageSendHandler(data);
+        });    
+    } catch (e) { throw e; }
 
 };
 
@@ -53,8 +69,6 @@ bot.start(async (ctx) => {
     qa = await Question.findAll({ include: [ Answer ] });
 });
 
-bot.on('text', async (ctx) => state.connection ? messageAddHandler(ctx) : qaHandler(ctx));
-
 bot.on('callback_query', ctx => {
 
     switch(ctx.callbackQuery.data){
@@ -69,6 +83,17 @@ bot.on('callback_query', ctx => {
 
     }
 })
+
+io.on('connection', (socket) => {
+    console.log(`connected ${socket.id}`);
+
+    bot.on('text', async (ctx) => state.connection ? messageHandler(ctx, socket) : qaHandler(ctx));
+
+    socket.on('disconnect', () => {
+      console.log(`disconnected ${socket.id}`);
+    });
+});
+
 
 module.exports = {
     bot, 
