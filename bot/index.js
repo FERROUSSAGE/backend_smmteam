@@ -15,33 +15,26 @@ const qaHandler = (ctx) => {
         })
 };
 
-const messageCreate = async (obj) => {
-    const { message, nickName, chatId } = obj;
-    try {
-        const msg = await Message.create({ message, nickName, chatId });
-        if(msg)
-            return true;
-    } catch (e) { return false;}
-}
-
 const messageSendHandler = async (obj) => {
-    const { chatId, message } = obj;
+    const { chatId, text } = obj;
     try{
-        return await bot.telegram.sendMessage(chatId, message);
+        return await bot.telegram.sendMessage(chatId, text);
     } catch(e){ return false; }
 };
 
 const messageHandler = async (ctx, socket) => {
-    const { message: { text: message, chat: { first_name: firstname, last_name: lastname, id: chatId } } } = ctx;
+    const { message: { text, chat: { first_name: firstname, last_name: lastname, id: chatId } } } = ctx;
     const nickName = `${firstname} ${lastname}`;
     try {
-        if(messageCreate({message: `${nickName}:${message}`, nickName, chatId}))
-            socket.emit('MESSAGE_SEND', {message: `${nickName}:${message}`, nickName, chatId});
-        
+        Message.create({text: `${nickName}: ${text}`, nickName, chatId})
+            .then(() => {
+                socket.emit('MESSAGE_SEND', {text: `${nickName}: ${text}`, nickName, chatId});
+            });
+            
         socket.on('MESSAGE_ADD', (data) => {
-            data = JSON.parse(data);
-            if(messageCreate(data))
-                messageSendHandler(data);
+            const { text, chatId, nickName } = JSON.parse(data);
+            Message.create({ text: `Оператор: ${text}`, nickName, chatId })
+                .then(() => messageSendHandler({ text, nickName, chatId })); 
         });    
     } catch (e) { throw e; }
 
@@ -70,13 +63,14 @@ bot.start(async (ctx) => {
 });
 
 bot.on('callback_query', ctx => {
-
     switch(ctx.callbackQuery.data){
         case 'openConnection': 
+            if(state.connection) return;
             state.connection = true;
             ctx.reply('✅ Соединение установлено!');
         break;
         case 'closeConnection':
+            if(!state.connection) return;
             state.connection = false;
             ctx.reply('👋 Соединение закрыто!');
         break;

@@ -7,9 +7,9 @@ class TelegramController{
         try {
             const messages = JSON.parse(JSON.stringify(await Message.findAll()));
             const response = Object.values([...messages]
-                .reduce((acc, { chatId, nickName, message }) => {
+                .reduce((acc, { chatId, nickName, text }) => {
                     if (!acc[chatId]) acc[chatId] = { chatId, nickName, messages: [] };
-                    acc[chatId].messages.push(message);
+                    acc[chatId].messages.push(text);
                     return acc;
                 }, {}));
             
