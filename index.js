@@ -3,9 +3,11 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app)
 
-module.exports = require('socket.io')(http);
+const io = require('socket.io')(http);
+module.exports = io;
 
-const bot = require('./bot').bot;
+const { bot, state, ioAddMessage } = require('./bot');
+const { ioResponse } = require('./controllers/streamboosterController');
 
 const cors = require('cors');
 
@@ -22,6 +24,23 @@ app.use(express.json());
 app.use('/', router);
 
 app.use(errorHandler);
+
+io.on('connection', (socket) => {
+    console.log(`connected ${socket.id}`);
+
+    socketIO = socket;
+
+    socket.on('STREAM_STARTED', ioResponse);
+    socket.on('MESSAGE_ADD', ioAddMessage);
+
+    socket.on('disconnect', () => {
+        console.log(`disconnect ${socket.id}`);
+        if(state.connection){
+            bot.telegram.sendMessage(state.chatId, '👋 Соединение закрыто!' + '\n' + 'Оператор вне сети!');
+        }
+    })
+});
+
 
 const start = async () => {
     try {

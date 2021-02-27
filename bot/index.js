@@ -6,6 +6,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 let state = {};
 let qa = {};
+let socketIO = null;
 
 const qaHandler = (ctx) => {
     Object.values(qa)
@@ -22,20 +23,24 @@ const messageSendHandler = async (obj) => {
     } catch(e){ return false; }
 };
 
-const messageHandler = async (ctx, socket) => {
+const ioAddMessage = (data) => {
+    const { text, chatId, nickName } = JSON.parse(data);
+    Message.create({ text: `Оператор: ${text}`, nickName, chatId })
+        .then(() => messageSendHandler({ text, nickName, chatId })); 
+}
+
+const messageHandler = async (ctx) => {
     const { message: { text, chat: { first_name: firstname, last_name: lastname, id: chatId } } } = ctx;
     const nickName = `${firstname} ${lastname}`;
+    
+    state.chatId = chatId;
+
     try {
         Message.create({text: `${nickName}: ${text}`, nickName, chatId})
             .then(() => {
-                socket.emit('MESSAGE_SEND', {text: `${nickName}: ${text}`, nickName, chatId});
+                io.emit('MESSAGE_SEND', {text: `${nickName}: ${text}`, nickName, chatId});
             });
-            
-        socket.on('MESSAGE_ADD', (data) => {
-            const { text, chatId, nickName } = JSON.parse(data);
-            Message.create({ text: `Оператор: ${text}`, nickName, chatId })
-                .then(() => messageSendHandler({ text, nickName, chatId })); 
-        });    
+              
     } catch (e) { throw e; }
 
 };
@@ -70,26 +75,17 @@ bot.on('callback_query', ctx => {
             ctx.reply('✅ Соединение установлено!');
         break;
         case 'closeConnection':
-            if(!state.connection) return;
+            if(!state?.connection) return;
             state.connection = false;
             ctx.reply('👋 Соединение закрыто!');
         break;
 
     }
 })
-
-io.on('connection', (socket) => {
-    console.log(`connected ${socket.id}`);
-
-    bot.on('text', async (ctx) => state.connection ? messageHandler(ctx, socket) : qaHandler(ctx));
-
-    socket.on('disconnect', () => {
-      console.log(`disconnected ${socket.id}`);
-    });
-});
-
+bot.on('text', async (ctx) => state?.connection ? messageHandler(ctx) : qaHandler(ctx));
 
 module.exports = {
     bot, 
-    messageSendHandler
+    state,
+    ioAddMessage
 };
