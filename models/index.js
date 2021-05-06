@@ -35,82 +35,86 @@ const Reseller = sequelize.define('reseller', {
 })
 
 const ResellerType = sequelize.define('reseller_type', {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  price: {
-    type: DataTypes.DOUBLE,
-    allowNull: false
-  },
-  description: {
-    type: DataTypes.STRING,
-    allowNull: true
-  }
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    price: {
+      type: DataTypes.DOUBLE,
+      allowNull: false
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
 })
 
 const Order = sequelize.define('order', {
-  idSmmcraft: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  idProject: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  socialNetwork: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  link: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  cost: {
-    type: DataTypes.DOUBLE,
-    allowNull: false
-  },
-  spend: {
-    type: DataTypes.DOUBLE,
-    allowNull: false
-  },
-  countOrdered: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  countViews: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  payment: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  dateCreate: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-    allowNull: true
-  },
-  date: {
-    type: DataTypes.STRING,
-    defaultValue: new Date().toLocaleDateString('ru-RU'),
-    allowNull: true
-  }
+    idSmmcraft: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    idProject: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    socialNetwork: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    link: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    cost: {
+      type: DataTypes.DOUBLE,
+      allowNull: false
+    },
+    spend: {
+      type: DataTypes.DOUBLE,
+      allowNull: false
+    },
+    countOrdered: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    countViews: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    payment: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    dateCreate: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: true
+    },
+    date: {
+      type: DataTypes.STRING,
+      defaultValue: new Date().toLocaleDateString('ru-RU'),
+      allowNull: true
+    }
 })
 
 const Message = sequelize.define('message', {
-  text: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  nickName: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  chatId: {
-    type: DataTypes.INTEGER, 
-    allowNull: false
-  },
+    text: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    nickName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    chatId: {
+      type: DataTypes.INTEGER, 
+      allowNull: false
+    },
 })
 
 const Question = sequelize.define('question', {

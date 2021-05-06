@@ -3,8 +3,19 @@ const { Order, User, Reseller, ResellerType } = require('../models');
 
 class OrderController{
     async getAll(req, res, next){
+        let { limit, page } = req.query,
+            offset = 0;
+        page = page || 1;
+        limit = limit || 9;
+        offset = (page * limit) - limit;
         try{
-            const order = await Order.findAll({ include: [ { model: User, attributes: ['name'] }, Reseller, ResellerType ]});
+            const order = await Order.findAndCountAll({ 
+                include: [ { model: User, attributes: ['name'] }, 
+                { model: Reseller, attributes: ['name']}, 
+                ResellerType ],
+                limit,
+                offset
+            });
             res.json({ status: true, response: order })
         } catch(e){
             return next(ApiError.internal(e));
@@ -29,6 +40,11 @@ class OrderController{
             return next(ApiError.internal('Заполните все поля ввода!'));
         
         try{
+
+            const candidate = await Order.findOne({ where: { idSmmcraft } });
+            if(candidate)
+                return next(ApiError.badRequest('Заказ с таким ID существует.'));
+
             const order = await Order.create({ idSmmcraft, idProject, socialNetwork, link, cost, spend, countOrdered,
                 countViews, payment, resellerId, resellerTypeId, userId });
             if(order)

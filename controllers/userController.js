@@ -22,9 +22,8 @@ class UserController {
         }
     }
     async login(req, res, next){
-        const { name, login, password } = req.body;
-
-        if(!login || !name || !password)
+        const {login, password } = req.body;
+        if(!login || !password)
             return next(ApiError.internal('Заполните все поля ввода!'));
         
         try{
