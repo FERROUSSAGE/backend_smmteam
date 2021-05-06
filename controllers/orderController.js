@@ -1,20 +1,20 @@
 const ApiError = require('../error/apiError');
 const { Order, User, Reseller, ResellerType } = require('../models');
-
+                // include: [ { model: User, attributes: ['name'] }, 
+                // { model: Reseller, attributes: ['name']}, 
+                // ResellerType ],
 class OrderController{
     async getAll(req, res, next){
-        let { limit, page } = req.query,
-            offset = 0;
-        page = page || 1;
-        limit = limit || 9;
-        offset = (page * limit) - limit;
+        let { page } = req.query;
+        page = page | 1;
+        let offset = (page * 10) - 10;
         try{
-            const order = await Order.findAndCountAll({ 
+            const order = await Order.findAndCountAll({
                 include: [ { model: User, attributes: ['name'] }, 
                 { model: Reseller, attributes: ['name']}, 
                 ResellerType ],
-                limit,
-                offset
+                offset,
+                limit: 10
             });
             res.json({ status: true, response: order })
         } catch(e){
