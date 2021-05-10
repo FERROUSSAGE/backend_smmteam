@@ -10,7 +10,7 @@ const VALUTE_URL = 'https://www.cbr-xml-daily.ru/daily_json.js';
 
 const SPREADSHEET_ID = '1af_ilY8FsygwpuZD4_onxkIs4BmtiWa2XDPgGT4AuMU';
 const GMAIL = 'smmcraft7@gmail.com';
-const GPASSWORD = 'vgdSoIP7X4';
+const GPASSWORD = 'vgdSoIP7X4vgdSoIP7X4';
 
 module.exports = {
     ADCORE_KEY, ADCORE_URL,

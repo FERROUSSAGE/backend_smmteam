@@ -24,12 +24,13 @@ class NodemailerController{
             });
 
             try {
-                await transporter.sendMail({
+                const sent = await transporter.sendMail({
                     from: '"smmcraft.ru" <team@smmcraft.ru>',
                     to: mail,
                     subject: subject ? subject : 'Вам письмо от smmcraft.ru',
                     html,
                 });
+                console.log(sent);
 
                 return res.json({ status: true, response: { toMail: mail, msg: 'Сообщение успешно отправлено!' } });
     

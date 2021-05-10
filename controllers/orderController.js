@@ -4,13 +4,16 @@ const { Order, User, Reseller, ResellerType } = require('../models');
 class OrderController{
     async getAll(req, res, next){
         let { page } = req.query;
-        page = page | 1;
+        page = page || 1;
         let offset = (page * 10) - 10;
         try{
             const order = await Order.findAndCountAll({
                 include: [ { model: User, attributes: ['name'] }, 
                 { model: Reseller, attributes: ['name']}, 
                 ResellerType ],
+                order: [
+                    ['dateCreate', 'desc']
+                ],
                 offset,
                 limit: 10
             });
@@ -30,6 +33,15 @@ class OrderController{
         }
     }
 
+    async getByText(req, res, next){
+        const { text } = req.body;
+        try {
+            let order = await Order.findAndCountAll();
+            order.rows = order.rows.filter(item => item.idSmmcraft.toString().includes(text));
+            res.json({status: true, response: order});
+        } catch (e) { return next(ApiError.internal(e)); }
+    }
+
     async checkOrder(req, res, next){
         const { idSmmcraft } = req.params;
         if( !idSmmcraft )
@@ -46,7 +58,7 @@ class OrderController{
         const { idSmmcraft, idProject, socialNetwork, link, cost, spend, countOrdered,
             countViews, payment, resellerId, resellerTypeId, userId } = req.body;
 
-        if( !idSmmcraft || !socialNetwork || !cost || !spend )
+        if( !idSmmcraft || !socialNetwork || !cost )
             return next(ApiError.internal('Заполните все поля ввода!'));
         
         try{

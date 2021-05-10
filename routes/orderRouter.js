@@ -4,7 +4,8 @@ const orderController = require('../controllers/orderController');
 
 router.get('/', orderController.getAll);
 router.post('/', orderController.createOrder);
-router.get('/:id', orderController.getById)
+router.post('/text', orderController.getByText);
+router.get('/:id', orderController.getById);
 router.get('/check/:idSmmcraft', orderController.checkOrder);
 router.patch('/:id', orderController.updateOrder);
 router.delete('/:id', orderController.deleteOrder);

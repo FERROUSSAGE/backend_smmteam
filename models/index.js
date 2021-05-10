@@ -30,7 +30,7 @@ const Reseller = sequelize.define('reseller', {
     },
     api_key: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     }
 })
 
@@ -76,7 +76,7 @@ const Order = sequelize.define('order', {
     },
     spend: {
       type: DataTypes.DOUBLE,
-      allowNull: false
+      allowNull: true
     },
     countOrdered: {
       type: DataTypes.INTEGER,
