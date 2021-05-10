@@ -30,6 +30,18 @@ class OrderController{
         }
     }
 
+    async checkOrder(req, res, next){
+        const { idSmmcraft } = req.params;
+        if( !idSmmcraft )
+            return next(ApiError.internal('Заполните все поля ввода!'));
+        try{
+            const candidate = await Order.findOne({ where: { idSmmcraft } });
+            if(candidate)
+                res.json({ status: false, response: { msg: 'Заказ с таким ID существует' } })
+            res.json({ status: true, response: null });
+        } catch(e) { return next(ApiError.internal(e)); }
+    }
+
     async createOrder(req, res, next){
         const { idSmmcraft, idProject, socialNetwork, link, cost, spend, countOrdered,
             countViews, payment, resellerId, resellerTypeId, userId } = req.body;
@@ -38,10 +50,6 @@ class OrderController{
             return next(ApiError.internal('Заполните все поля ввода!'));
         
         try{
-
-            const candidate = await Order.findOne({ where: { idSmmcraft } });
-            if(candidate)
-                return next(ApiError.badRequest('Заказ с таким ID существует.'));
 
             const order = await Order.create({ idSmmcraft, idProject, socialNetwork, link, cost, spend, countOrdered,
                 countViews, payment, resellerId, resellerTypeId, userId });

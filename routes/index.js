@@ -22,6 +22,5 @@ router.use('/google', googleRoutes);
 router.use('/qa', qaRoutes);
 router.use('/telegram', telegramRouter);
 router.use('/streambooster', streamboosterRouter);
-router.use('/check', check);
 
 module.exports = router;
