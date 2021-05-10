@@ -9,7 +9,8 @@ const orderRouter = require('./orderRouter'),
     googleRoutes = require('./googleRoutes'),
     qaRoutes = require('./qaRoutes'),
     telegramRouter = require('./telegramRouter'),
-    streamboosterRouter = require('./streamboosterRouter');
+    streamboosterRouter = require('./streamboosterRouter'),
+    check = require('./check');
 
 
 router.use('/user', userRouter);
@@ -21,5 +22,6 @@ router.use('/google', googleRoutes);
 router.use('/qa', qaRoutes);
 router.use('/telegram', telegramRouter);
 router.use('/streambooster', streamboosterRouter);
+router.use('/check', check);
 
 module.exports = router;

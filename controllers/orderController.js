@@ -1,8 +1,6 @@
 const ApiError = require('../error/apiError');
 const { Order, User, Reseller, ResellerType } = require('../models');
-                // include: [ { model: User, attributes: ['name'] }, 
-                // { model: Reseller, attributes: ['name']}, 
-                // ResellerType ],
+
 class OrderController{
     async getAll(req, res, next){
         let { page } = req.query;
