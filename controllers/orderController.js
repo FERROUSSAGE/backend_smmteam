@@ -23,7 +23,7 @@ class OrderController{
     async getById(req, res, next){
         const { id } = req.params;
         try{
-            const order = await Order.findOne({ where: { id }});
+            const order = await Order.findOne({ where: { idSmmcraft: id }});
             res.json({ status: true, response: order });
         } catch(e){
             return next(ApiError.internal(e));
