@@ -28,8 +28,6 @@ app.use(errorHandler);
 io.on('connection', (socket) => {
     console.log(`connected ${socket.id}`);
 
-    socketIO = socket;
-
     socket.on('STREAM_STARTED', ioResponse);
     socket.on('MESSAGE_ADD', ioAddMessage);
 
