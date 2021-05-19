@@ -69,7 +69,7 @@ class SpanelController{
 
                 return res.json({ status: true, response: countInfo })
 
-            } else return res.json({ status: false, response: { error } });
+            } else return res.json({ status: false, response: { msg: error } });
 
         } catch (e){
             return next(ApiError.internal(e));

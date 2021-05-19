@@ -62,15 +62,15 @@ class AdcoreController{
                 data: toUrlEncoded({ method: 'ads', action: 'stats', id, apiKey: ADCORE_KEY }),
                 url: ADCORE_URL
             });
-
             const { status, msg, data } = request.data;
-            const countInfo = {
-                viewed: Object.values(data).reduce((acc, value) => acc + value, 0),
-                total: countOrdered,
-            }
-            
-            if(status)
+
+            if(status){
+                const countInfo = {
+                    performed: Object.values(data).reduce((acc, value) => acc + value, 0),
+                    total: countOrdered,
+                }
                 return res.json({ status: true, response: countInfo });
+            }
             else return res.json({ status: false, response: { msg } });
 
         } catch(e){

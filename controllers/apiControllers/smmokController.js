@@ -2,8 +2,6 @@ const ApiError = require('../../error/apiError');
 const axios = require('axios');
 const toUrlEncoded = require('../../utils/toUrlEncoded');
 const { SMMOK_URL, SMMOK_KEY } = require('../../utils/consts');
-const { login } = require('../userController');
-const { info } = require('./vktargetController');
 
 class SmmokController{
     async getBalance(req, res, next){
@@ -40,10 +38,13 @@ class SmmokController{
                 url: `${SMMOK_URL}addCampaign`
             }); 
 
-            const { response: { id, user_balance: balance } = {}, extra = null } = request.data;
+            const { error, respond: { id, user_balance: balance } = {}, extra = null,  } = request.data;
             
             if(id && balance)
                 return res.json({ status: true, response: { id, balance } });
+
+            else if(error)
+                return res.json({ status: false, response: { msg: error } });
 
             else if(extra){
                 const editRequest = await axios({
@@ -55,9 +56,11 @@ class SmmokController{
                     url: `${SMMOK_URL}editCampaign`
                 });
                 
-                const { status, respond: { user_balance: balance } } = editRequest.data;
+                const { status, error, respond: { user_balance: balance } } = editRequest.data;
                 if(status == 200)
                     return res.json({ status: true, response: { id: extra, balance } });
+                else if(error)
+                    return res.json({ status: false, response: { msg: erorr } });
             }
         } catch(e){
             return next(ApiError.internal(e));
@@ -87,7 +90,7 @@ class SmmokController{
 
             if(status === 200)
                 return res.json({ status: true, response: countInfo });
-            else return res.json({ status: false, response: { error } });
+            else return res.json({ status: false, response: { msg: error } });
         } catch(e){
             return next(ApiError.internal(e));
         }

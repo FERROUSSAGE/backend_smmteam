@@ -30,6 +30,7 @@ io.on('connection', (socket) => {
 
     socket.on('STREAM_STARTED', ioResponse);
     socket.on('MESSAGE_ADD', ioAddMessage);
+    socket.emit('hello', 'world');
 
     socket.on('disconnect', () => {
         console.log(`disconnect ${socket.id}`);

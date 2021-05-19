@@ -25,7 +25,7 @@ class VktargetController{
             const { id: idProject, response, errors} = request.data.response;
             if(response)
                 return res.json({ status: true, response: idProject });
-            else return res.json({ status: false, response: errors });
+            else return res.json({ status: false, response: { msg: errors }});
 
         } catch(e){
             return next(ApiError.internal(e));
@@ -45,16 +45,19 @@ class VktargetController{
                 data: toUrlEncoded({ tid, api_key: VKTARGET_KEY }),
                 url: `${VKTARGET_URL}getTaskStat`
             });
+            
             const obj = Object.values(request.data.response)[0];
 
-            const { quantity: countOrdered, count } = obj;
+            const { quantity: countOrdered, count, error } = obj;
 
             const countInfo = {
                 performed: count,
                 total: countOrdered
             };
+            if(!error)
+                res.json({ status: true, response: countInfo });
+            else res.json({status: false, response: { msg: error }})
             
-            res.json({ status: true, response: countInfo });
 
         } catch(e){
             return next(ApiError.internal(e));
