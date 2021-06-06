@@ -36,8 +36,17 @@ class OrderController{
     async getByText(req, res, next){
         const { text } = req.body;
         try {
-            let order = await Order.findAndCountAll();
-            order.rows = order.rows.filter(item => item.idSmmcraft.toString().includes(text));
+            let order = await Order.findAndCountAll({
+                include: [ { model: User, attributes: ['name'] }, 
+                { model: Reseller, attributes: ['name']}, 
+                ResellerType ],
+                order: [
+                    ['dateCreate', 'desc']
+                ]});
+            order.rows = order.rows.filter(item => 
+                item.idSmmcraft.toString().includes(text) 
+                || item.link.includes(text) 
+                || item.user.name.includes(text));
             res.json({status: true, response: order});
         } catch (e) { return next(ApiError.internal(e)); }
     }
