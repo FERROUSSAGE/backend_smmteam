@@ -16,7 +16,7 @@ class UserController {
 
             const hashPassword = await bcrypt.hash(password, 5);
             const user = await User.create({ name, login, password: hashPassword, roleId });
-            return res.json({ status: true, response: user });
+            return res.json({ status: true, response: [user] });
         } catch(e){
             return next(ApiError.internal(e));
         }
@@ -40,7 +40,7 @@ class UserController {
                 name: user.name,
                 password
             }
-            return res.json({ status: true, response: result });
+            return res.json({ status: true, response: [result] });
         } catch(e){
             return next(ApiError.internal(e));
         }
