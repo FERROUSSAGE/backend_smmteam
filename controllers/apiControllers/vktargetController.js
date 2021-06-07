@@ -24,7 +24,7 @@ class VktargetController{
             })
             const { id: idProject, response, errors} = request.data.response;
             if(response)
-                return res.json({ status: true, response: idProject });
+                return res.json({ status: true, response: { id: idProject } });
             else return res.json({ status: false, response: { msg: errors }});
 
         } catch(e){

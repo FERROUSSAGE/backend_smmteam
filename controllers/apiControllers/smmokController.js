@@ -43,25 +43,24 @@ class SmmokController{
             if(id && balance)
                 return res.json({ status: true, response: { id, balance } });
 
+                else if(extra){
+                    const editRequest = await axios({
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        data: toUrlEncoded({ 
+                            project_id: extra, offerts_q, offerts_per_day:offerts_q,
+                            filter_age, filter_sex, filter_sex, api_key: SMMOK_KEY }),
+                        url: `${SMMOK_URL}editCampaign`
+                    });
+                    
+                    const { status, error, respond: { user_balance: balance } } = editRequest.data;
+                    if(status == 200)
+                        return res.json({ status: true, response: { id: extra, balance } });
+                    else if(error)
+                        return res.json({ status: false, response: { msg: erorr } });
+                }
             else if(error)
                 return res.json({ status: false, response: { msg: error } });
-
-            else if(extra){
-                const editRequest = await axios({
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    data: toUrlEncoded({ 
-                        project_id: extra, offerts_q, offerts_per_day:offerts_q,
-                        filter_age, filter_sex, filter_sex, api_key: SMMOK_KEY }),
-                    url: `${SMMOK_URL}editCampaign`
-                });
-                
-                const { status, error, respond: { user_balance: balance } } = editRequest.data;
-                if(status == 200)
-                    return res.json({ status: true, response: { id: extra, balance } });
-                else if(error)
-                    return res.json({ status: false, response: { msg: erorr } });
-            }
         } catch(e){
             return next(ApiError.internal(e));
         }

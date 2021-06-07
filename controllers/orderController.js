@@ -70,9 +70,12 @@ class OrderController{
         if( !idSmmcraft || !socialNetwork || !cost )
             return next(ApiError.internal('Заполните все поля ввода!'));
         
+        console.log(spend);
+        console.log(req.body);
+
         try{
 
-            const order = await Order.create({ idSmmcraft, idProject, socialNetwork, link, cost, spend, countOrdered,
+            const order = await Order.create({ idSmmcraft, idProject, socialNetwork, link, cost, spend: +spend, countOrdered,
                 countViews, payment, resellerId, resellerTypeId, userId });
             if(order)
                 res.json({ status: true, response: order });
