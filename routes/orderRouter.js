@@ -7,7 +7,7 @@ router.post('/', orderController.createOrder);
 router.post('/text', orderController.getByText);
 router.get('/:id', orderController.getById);
 router.get('/check/:idSmmcraft', orderController.checkOrder);
-router.patch('/:id', orderController.updateOrder);
+router.put('/:id', orderController.updateOrder);
 router.delete('/:id', orderController.deleteOrder);
 
 module.exports = router;

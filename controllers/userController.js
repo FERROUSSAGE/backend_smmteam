@@ -38,7 +38,8 @@ class UserController {
             const result = {
                 id: user.id,
                 name: user.name,
-                password
+                password, 
+                roleId: user.roleId
             }
             return res.json({ status: true, response: [result] });
         } catch(e){
@@ -63,7 +64,22 @@ class UserController {
         } catch(e){
             return next(ApiError.internal(e));
         }
+    }
+    
+    async deleteUser(req, res, next){
+        const { id } = req.params;
+        if(!id)
+            return next(ApiError.internal('Не был передан параметр -id-'));
 
+        try{
+             const orderDelete = await User.destroy({ where: { id } });
+            if(orderDelete)
+                res.json({ status: true, message: 'Удаление прошло успешно!' });
+            else 
+                res.json({ status: false, message: 'Произошла ошибка в удалении' });
+        } catch(e){
+            return next(ApiError.internal(e));
+        }
     }
 
 }

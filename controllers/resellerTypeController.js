@@ -5,8 +5,7 @@ class resellerTypeController{
     async getTypes(req, res, next){
         try{
             const types = await ResellerType.findAll({ include: [ { model: Reseller, attributes: ['name']} ]});
-            res.json({ status: true, response: types
-            });
+            res.json({ status: true, response: types });
         } catch(e){
             return next(ApiError.internal(e));
         }
@@ -20,7 +19,8 @@ class resellerTypeController{
         try{
             const t = await ResellerType.create({ type, price, description, resellerId, name });
             if(t)
-                res.json({ status: true, response: t });
+                res.json({ status: true, response: [t] });
+            else return res.json({ status: false, response: [{ msg: 'Произошла ошибка при создании типа!' }] })
         } catch(e){
             return next(ApiError.internal(e));
         }
@@ -54,9 +54,9 @@ class resellerTypeController{
         try{
             const deleted = await ResellerType.destroy({ where: { id } });
             if(deleted)
-                res.json('Удаление прошло успешно!')
+                return res.json({ status: true, response: [{ msg: 'Удаление прошло успешно!' }] })
             else 
-                res.json('Произошла ошибка при удалении!');
+                return res.json({ status: false, response: [{ msg: 'Произошла ошибка при удалении!' }] })
         } catch(e){
             return next(ApiError.internal(e));
         }
