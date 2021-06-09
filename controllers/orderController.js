@@ -44,9 +44,9 @@ class OrderController{
                     ['dateCreate', 'desc']
                 ]});
             order.rows = order.rows.filter(item => 
-                item.idSmmcraft.toString().includes(text) 
-                || item.link.includes(text) 
-                || item.user.name.includes(text));
+                item.idSmmcraft.toString().startsWith(text) 
+                || item.link.toString().startsWith(text)
+                || item.user.name.toString().startsWith(text));
             res.json({status: true, response: order});
         } catch (e) { return next(ApiError.internal(e)); }
     }
