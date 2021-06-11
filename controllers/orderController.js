@@ -70,8 +70,6 @@ class OrderController{
         if( !idSmmcraft || !socialNetwork || !cost )
             return next(ApiError.internal('Заполните все поля ввода!'));
         
-        console.log(spend);
-        console.log(req.body);
 
         try{
 
