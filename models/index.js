@@ -97,7 +97,7 @@ const Order = sequelize.define('order', {
     },
     date: {
       type: DataTypes.STRING,
-      defaultValue: new Date().toLocaleDateString('ru-RU'),
+      defaultValue: new Date().toLocaleDateString('ru-RU', { timeZone: 'Europe/Moscow' }),
       allowNull: true
     }
 })
